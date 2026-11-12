@@ -30,7 +30,7 @@ extrapolated to hardware that was not tested.
 Command: `node tools/validate-language.js`
 
 Final run result: 37 files scanned (this report included), 292 catalog entries,
-8,680 quoted literals checked, 9 `String.fromCharCode()` constructions checked,
+8,682 quoted literals checked, 9 `String.fromCharCode()` constructions checked,
 0 violations, 0 unresolved literal catalog-key references.
 
 The static scan covers authored HTML, CSS, JS, JSON, SVG-like sources, Markdown
@@ -78,7 +78,7 @@ check and was not substituted by OCR.
 | `node tools/validate-language.js` | 0 violations (details in section 2). |
 | Build inspection | `index.html` has exactly 1 `src`/`href` attribute (the inline `data:,` favicon), 0 external URLs, `<html lang="en">`, English `<title>`, MIT notice and vendor `@license` present. |
 | `node tools/live-qa.js` | Published site reached TITLE with `booted: true`; runtime audit 0 violations, 0 non-ASCII visible characters, 0 page errors, 0 external requests. Details in section 8. |
-| `node tools/audio-qa.js` | PASS: no AudioContext before the first user gesture; context `running` at 48 kHz afterwards; ambient RMS 0.04666, gunshot peak 0.15184, muted output exactly 0; 0 page errors. |
+| `node tools/audio-qa.js` | PASS on 3 consecutive runs: no AudioContext before the first user gesture; context `running` at 48 kHz afterwards; non-zero ambient RMS; a gunshot schedules 2 noise bursts and 1 tone and raises short-window output RMS by 1.24-1.36x over the ambient baseline; muted output exactly 0; 0 page errors. The target URL can be overridden with `HB_AUDIO_QA_URL`. |
 
 UI QA coverage: boot/title, settings persistence and reset to defaults,
 controls panel, intro SKIP via real mouse click, W movement, Shift sprint,
@@ -161,8 +161,11 @@ The machine-readable UI QA result is `screenshots/qa-report.json`.
 - Redundant speaker names were removed from radio subtitle lines, since the
   speaker is already rendered separately.
 - QA tooling issues that were not product defects: a too-conservative bot
-  navigation radius, a stale static catalog parser, and short key holds that
-  did not span a slow software-rendered frame.
+  navigation radius, a stale static catalog parser, short key holds that did
+  not span a slow software-rendered frame, and an audio check that sampled a
+  gunshot 260 ms after the trigger, by which time the roughly 0.19 s envelope
+  had decayed and the reading was effectively ambient. The check now samples
+  continuously through the shot and verifies the scheduled source nodes.
 
 ## 7. Limitations and checks not performed
 
@@ -181,9 +184,15 @@ The machine-readable UI QA result is `screenshots/qa-report.json`.
   quality judgement was made. `tools/audio-qa.js` verified only the signal
   path: no AudioContext exists before the first user gesture, the context
   reaches `running` at 48 kHz afterwards, the master output carries a
-  non-zero ambient signal (RMS 0.04666), a gunshot raises the peak, and
-  mute drives the output to exactly zero. No acoustic or perceptual
-  verification was performed.
+  non-zero ambient signal, `HB.audio.gunshot()` synchronously schedules its
+  two noise bursts and one tone while raising short-window output RMS above
+  the ambient baseline, and mute drives the output to exactly zero. The
+  soundscape is synthesized noise, so sampled amplitudes are not stable
+  across runs: three PASS runs observed ambient RMS 0.04654-0.05019,
+  baseline RMS 0.05318-0.05407 and gunshot RMS 0.06718-0.07264, with gunshot
+  to baseline ratios of 1.242, 1.286 and 1.360. The check therefore asserts
+  inequalities and node counts, not exact amplitudes. No acoustic or
+  perceptual verification was performed.
 - Touch devices have no dedicated on-screen pause button. Moving focus away
   from the browser pauses the mission and the resulting modal menu is fully
   touch-operable. The requested touch action set (move, look, fire, ADS,
