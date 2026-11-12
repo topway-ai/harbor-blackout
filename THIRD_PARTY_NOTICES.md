@@ -43,5 +43,8 @@ this project. The reference HTML file supplied with the request was treated as
 untrusted reference material only: no implementation, artwork, branding,
 lettering or other content from it is included in this distribution.
 
-No license is granted or assigned to the original work in this repository;
-that choice is left to the owner.
+The original game code, text, procedural textures, generated geometry and
+synthesized audio in this repository are licensed under the MIT License. See
+`LICENSE` at the repository root for the full project license text. The
+third-party notice reproduced above is separate, and its copyright remains
+with the three.js authors.

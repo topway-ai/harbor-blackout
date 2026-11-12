@@ -6,10 +6,11 @@ extrapolated to hardware that was not tested.
 
 ## 1. Build and test environment
 
-- Deliverable: `index.html`, 844,866 bytes, produced by `node src/build.js`
+- Deliverable: `index.html`, 846,097 bytes, produced by `node src/build.js`
   from 15 readable source modules. It embeds CSS, the three.js UMD runtime,
-  all game code, all generated textures, WebAudio synthesis and the full MIT
-  notice. No build step is needed to play it.
+  all game code, all generated textures, WebAudio synthesis, the project MIT
+  notice and the verbatim three.js MIT notice. No build step is needed to
+  play it.
 - Host: macOS 26.5, arm64. Node.js v22.22.2 (development and QA tooling only).
 - Browser: Google Chrome 157.0.8103.78, driven headless by
   `playwright-core` 1.55.0.
@@ -29,7 +30,7 @@ extrapolated to hardware that was not tested.
 Command: `node tools/validate-language.js`
 
 Final run result: 36 files scanned (this report included), 292 catalog entries,
-8,641 quoted literals checked, 9 `String.fromCharCode()` constructions checked,
+8,661 quoted literals checked, 9 `String.fromCharCode()` constructions checked,
 0 violations, 0 unresolved literal catalog-key references.
 
 The static scan covers authored HTML, CSS, JS, JSON, SVG-like sources, Markdown
@@ -119,7 +120,9 @@ must not be read as hardware GPU frame rates.
 `HB.game.perf()` reports `avgFrameMs`, `avgFps`, `p95FrameMs`, `maxFrameMs`,
 the WebGL renderer string, quality tier and render resolution. The long
 maximum values are single startup or scene-build frames under software
-rendering. No 60 FPS result was measured and no frame rate is guaranteed on
+rendering. These figures vary substantially between runs on the software
+renderer; each row records one specific run rather than a stable average
+across runs. No 60 FPS result was measured and no frame rate is guaranteed on
 unspecified hardware. LOW quality is the intended mobile setting.
 
 ## 5. Screenshots reviewed
@@ -185,8 +188,7 @@ The machine-readable UI QA result is `screenshots/qa-report.json`.
   isolation, but was not benchmarked as a hosted service.
 - The attached reference HTML was treated as untrusted reference material
   only. No implementation code, text, brand, font stack or art from it was
-  copied or redistributed. No license is assigned to the original game code,
-  text and generated assets; that choice is left to the owner.
+  copied or redistributed. The original work is MIT licensed; see `LICENSE`.
 - The distribution targets modern desktop browsers with WebGL; an explicit
   WebGL-unavailable error screen is provided, but very old browsers and
   screen readers were not audited for full accessibility.
@@ -205,7 +207,7 @@ Checks actually executed against the live URL:
 | Check | Result |
 | --- | --- |
 | Pages API | `status: built`; latest build `status: built`, `error: null` |
-| HTTP GET of site root | 200, `text/html; charset=utf-8`, 844,866 bytes |
+| HTTP GET of site root | 200, `text/html; charset=utf-8`, 846,097 bytes |
 | SHA-256 of served `index.html` vs local build | identical |
 | HTTP GET of `/.nojekyll` | 200 |
 | `node tools/live-qa.js` | PASS: BOOT -> TITLE, `booted: true`, `lang="en"`, English document title, runtime audit 0 violations with 292 catalog entries, 0 non-ASCII visible characters, 3 relays, 109 colliders, 0 page/console errors, 0 external requests |
@@ -217,19 +219,24 @@ limits are soft limits that can pause serving or trigger a support email, not
 overage charges. GitHub Actions is free for public repositories. The only
 entry visible under Actions is GitHub's automatically generated
 `dynamic/pages/pages-build-deployment` job; its run timing API returned
-`billable.UBUNTU.total_ms: 0` across 3 jobs. No Git LFS, Codespaces, custom
+`billable.UBUNTU.total_ms: 0` for every job of every recorded build. No Git
+LFS, Codespaces, custom
 domain, CDN, paid add-on, secret or billing configuration was created. No
 tracked file exceeds 5 MB and the published site needs no recurring build;
 it is rebuilt only when the `main` branch is pushed.
 
-The repository is public and source-visible, but no `LICENSE` file is
-present: per the original requirement, no license is assigned to the original
-code, text or generated assets. Choosing one is left to the repository owner.
+The repository is public and source-visible. The original work is licensed
+under the MIT License (`LICENSE`, Copyright (c) 2026 topway-ai). The
+generated `index.html` embeds the same project notice. The bundled three.js
+runtime keeps its own MIT license and copyright, reproduced verbatim in
+`THIRD_PARTY_NOTICES.md`, `src/vendor/THREE_LICENSE.txt` and the bundle
+header.
 
 ## 9. Deliverables
 
 `index.html` (playable single-file build), `.nojekyll`, `.gitignore`,
-`README.md` (English), `THIRD_PARTY_NOTICES.md`, `VALIDATION.md` (this file),
-`src/` (readable sources, vendor runtime and original MIT license), `tools/`
-(development-only validation, QA and live-site scripts), `screenshots/`
-(selected QA screenshots and `qa-report.json`).
+`LICENSE` (MIT for the original work), `README.md` (English),
+`THIRD_PARTY_NOTICES.md`, `VALIDATION.md` (this file), `src/` (readable
+sources, vendor runtime and original MIT license), `tools/` (development-only
+validation, QA and live-site scripts), `screenshots/` (selected QA
+screenshots and `qa-report.json`).

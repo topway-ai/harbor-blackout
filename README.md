@@ -153,9 +153,11 @@ Rebuild the single-file distribution after editing a source module:
 node src/build.js
 ```
 
-The bundler writes `index.html` at the repository root, injects the third-party
-notice as an HTML comment, and keeps the vendor license verbatim. Only Node.js is
-needed for this optional step; the game itself does not need Node.js.
+The bundler writes `index.html` at the repository root, injects the project MIT
+notice and the verbatim third-party notice as HTML comments, and keeps the
+vendor license intact. `LICENSE` at the repository root is the source of the
+project notice. Only Node.js is needed for this optional step; the game itself
+does not need Node.js.
 
 ## Language
 
@@ -167,16 +169,20 @@ titles and document metadata. Base textures contain no lettering or logos. The
 document language is fixed to `en` and does not follow the browser locale.
 See `VALIDATION.md` for the checks actually performed and their limits.
 
-## Third-party software and license
+## License and third-party software
 
-The bundled runtime is three.js r149 (UMD build), MIT licensed. Its full license
-is reproduced in `THIRD_PARTY_NOTICES.md`, in `src/vendor/THREE_LICENSE.txt`,
-and as an HTML comment at the top of `index.html`. No other third-party code or
-assets are shipped. Generated textures, geometry and audio are produced at
-runtime by original code in this repository.
+The original game code, text, procedural textures, generated geometry and
+synthesized audio in this repository are licensed under the MIT License. See
+`LICENSE` for the full text. Copyright (c) 2026 topway-ai. The single-file
+`index.html` also embeds the project MIT notice, so a standalone copy of the
+game carries its license with it.
 
-No license is assigned to the original game code, text and generated assets in
-this repository; choosing one is left to the owner.
+The bundled runtime is three.js r149 (UMD build), also MIT licensed, with its
+own copyright held by the three.js authors. Its full license is reproduced in
+`THIRD_PARTY_NOTICES.md`, in `src/vendor/THREE_LICENSE.txt`, and as an HTML
+comment at the top of `index.html`. No other third-party code or assets are
+shipped. Generated textures, geometry and audio are produced at runtime by
+original code in this repository.
 
 ## Performance notes
 
