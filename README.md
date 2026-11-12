@@ -92,13 +92,16 @@ https://topway-ai.github.io/harbor-blackout/
 ```
 
 It uses GitHub Pages on a public repository under GitHub Free, configured as
-"Deploy from a branch" on the `main` branch root folder. There is no GitHub
-Actions workflow, no build service, no Git LFS, no custom domain, no CDN and no
-paid add-on. GitHub Pages on a public repository has no usage charge. Its soft
-limits are a 1 GB published site, 100 GB per month of bandwidth and 10 builds
-per hour; exceeding a soft limit can pause serving or prompt a support email,
-but does not create a bill. This repository is about 16 MB and needs no
-recurring builds.
+"Deploy from a branch" on the `main` branch root folder. No workflow file is
+tracked in this repository: the only entry visible under Actions is GitHub's
+own automatically generated `pages-build-deployment` job, whose billing timer
+reports 0 billable milliseconds. There is no Git LFS, no custom domain, no CDN,
+no Codespaces configuration and no paid add-on. GitHub Pages on a public
+repository has no usage charge, and Actions usage on public repositories is
+free. Its soft limits are a 1 GB published site, 100 GB per month of bandwidth
+and 10 builds per hour; exceeding a soft limit can pause serving or prompt a
+support email, but does not create a bill. This repository is about 16 MB and
+needs no recurring builds.
 
 To reproduce the same setup elsewhere:
 

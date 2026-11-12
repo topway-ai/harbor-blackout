@@ -18,7 +18,8 @@ extrapolated to hardware that was not tested.
   renderer; no hardware GPU was used for any measurement below.
 - Static subpath check: a local Node HTTP server served `index.html` and
   `.nojekyll` from `http://127.0.0.1:<port>/harbor-blackout/index.html`,
-  reproducing a GitHub Pages repository subpath. No deployment was performed.
+  reproducing a GitHub Pages repository subpath. The real publication and its
+  live-site checks are recorded in section 8.
 - Viewports and locales: 1280x720 (en-US), 1024x640 (zh-CN, timezone
   Asia/Shanghai), 390x844 at 2x (ja-JP, mobile + touch emulation), 960x540
   (en-US, playthrough).
@@ -27,8 +28,8 @@ extrapolated to hardware that was not tested.
 
 Command: `node tools/validate-language.js`
 
-Final run result: 35 files scanned (this report included), 292 catalog entries,
-8,587 quoted literals checked, 9 `String.fromCharCode()` constructions checked,
+Final run result: 36 files scanned (this report included), 292 catalog entries,
+8,641 quoted literals checked, 9 `String.fromCharCode()` constructions checked,
 0 violations, 0 unresolved literal catalog-key references.
 
 The static scan covers authored HTML, CSS, JS, JSON, SVG-like sources, Markdown
@@ -75,6 +76,7 @@ check and was not substituted by OCR.
 | `node tools/playthrough.js` | Full mission won with no debug shortcuts; RADIO RESET PASS; RESTART RESET PASS; 0 errors. |
 | `node tools/validate-language.js` | 0 violations (details in section 2). |
 | Build inspection | `index.html` has exactly 1 `src`/`href` attribute (the inline `data:,` favicon), 0 external URLs, `<html lang="en">`, English `<title>`, MIT notice and vendor `@license` present. |
+| `node tools/live-qa.js` | Published site reached TITLE with `booted: true`; runtime audit 0 violations, 0 non-ASCII visible characters, 0 page errors, 0 external requests. Details in section 8. |
 
 UI QA coverage: boot/title, settings persistence and reset to defaults,
 controls panel, intro SKIP via real mouse click, W movement, Shift sprint,
@@ -178,8 +180,9 @@ The machine-readable UI QA result is `screenshots/qa-report.json`.
   from the browser pauses the mission and the resulting modal menu is fully
   touch-operable. The requested touch action set (move, look, fire, ADS,
   reload, jump, interact) is present; crouch and sprint are also provided.
-- No GitHub Pages deployment, repository push or account action was taken.
-  Hosting was verified only against a local repository-style subpath server.
+- Performance figures were measured locally, not over the public network.
+  The live site was checked for loading, language, runtime errors and network
+  isolation, but was not benchmarked as a hosted service.
 - The attached reference HTML was treated as untrusted reference material
   only. No implementation code, text, brand, font stack or art from it was
   copied or redistributed. No license is assigned to the original game code,
@@ -188,10 +191,45 @@ The machine-readable UI QA result is `screenshots/qa-report.json`.
   WebGL-unavailable error screen is provided, but very old browsers and
   screen readers were not audited for full accessibility.
 
-## 8. Deliverables
+## 8. Published site and billing review
 
-`index.html` (playable single-file build), `.nojekyll`, `README.md`
-(English), `THIRD_PARTY_NOTICES.md`, `VALIDATION.md` (this file),
-`src/` (readable sources, vendor runtime and original MIT license),
-`tools/` (development-only validation and QA scripts), `screenshots/`
+After the local checks above, the project was published to the public
+repository `topway-ai/harbor-blackout` and served by GitHub Pages at
+`https://topway-ai.github.io/harbor-blackout/`. Configuration: `build_type`
+`legacy` ("Deploy from a branch"), source branch `main`, source path `/`,
+HTTPS enforced, and `.nojekyll` at the repository root. No workflow file is
+tracked in the repository.
+
+Checks actually executed against the live URL:
+
+| Check | Result |
+| --- | --- |
+| Pages API | `status: built`; latest build `status: built`, `error: null` |
+| HTTP GET of site root | 200, `text/html; charset=utf-8`, 844,866 bytes |
+| SHA-256 of served `index.html` vs local build | identical |
+| HTTP GET of `/.nojekyll` | 200 |
+| `node tools/live-qa.js` | PASS: BOOT -> TITLE, `booted: true`, `lang="en"`, English document title, runtime audit 0 violations with 292 catalog entries, 0 non-ASCII visible characters, 3 relays, 109 colliders, 0 page/console errors, 0 external requests |
+
+Billing review. The repository is public on a GitHub Free account. GitHub
+Pages is included with GitHub Free for public repositories and has no usage
+charge; its 1 GB site size, 100 GB per month bandwidth and 10 builds per hour
+limits are soft limits that can pause serving or trigger a support email, not
+overage charges. GitHub Actions is free for public repositories. The only
+entry visible under Actions is GitHub's automatically generated
+`dynamic/pages/pages-build-deployment` job; its run timing API returned
+`billable.UBUNTU.total_ms: 0` across 3 jobs. No Git LFS, Codespaces, custom
+domain, CDN, paid add-on, secret or billing configuration was created. No
+tracked file exceeds 5 MB and the published site needs no recurring build;
+it is rebuilt only when the `main` branch is pushed.
+
+The repository is public and source-visible, but no `LICENSE` file is
+present: per the original requirement, no license is assigned to the original
+code, text or generated assets. Choosing one is left to the repository owner.
+
+## 9. Deliverables
+
+`index.html` (playable single-file build), `.nojekyll`, `.gitignore`,
+`README.md` (English), `THIRD_PARTY_NOTICES.md`, `VALIDATION.md` (this file),
+`src/` (readable sources, vendor runtime and original MIT license), `tools/`
+(development-only validation, QA and live-site scripts), `screenshots/`
 (selected QA screenshots and `qa-report.json`).
