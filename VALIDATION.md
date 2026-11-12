@@ -29,8 +29,8 @@ extrapolated to hardware that was not tested.
 
 Command: `node tools/validate-language.js`
 
-Final run result: 36 files scanned (this report included), 292 catalog entries,
-8,661 quoted literals checked, 9 `String.fromCharCode()` constructions checked,
+Final run result: 37 files scanned (this report included), 292 catalog entries,
+8,680 quoted literals checked, 9 `String.fromCharCode()` constructions checked,
 0 violations, 0 unresolved literal catalog-key references.
 
 The static scan covers authored HTML, CSS, JS, JSON, SVG-like sources, Markdown
@@ -78,6 +78,7 @@ check and was not substituted by OCR.
 | `node tools/validate-language.js` | 0 violations (details in section 2). |
 | Build inspection | `index.html` has exactly 1 `src`/`href` attribute (the inline `data:,` favicon), 0 external URLs, `<html lang="en">`, English `<title>`, MIT notice and vendor `@license` present. |
 | `node tools/live-qa.js` | Published site reached TITLE with `booted: true`; runtime audit 0 violations, 0 non-ASCII visible characters, 0 page errors, 0 external requests. Details in section 8. |
+| `node tools/audio-qa.js` | PASS: no AudioContext before the first user gesture; context `running` at 48 kHz afterwards; ambient RMS 0.04666, gunshot peak 0.15184, muted output exactly 0; 0 page errors. |
 
 UI QA coverage: boot/title, settings persistence and reset to defaults,
 controls panel, intro SKIP via real mouse click, W movement, Shift sprint,
@@ -176,8 +177,12 @@ The machine-readable UI QA result is `screenshots/qa-report.json`.
   is made.
 - Touch input was exercised with Chrome DevTools Protocol touch events in an
   emulated 390x844 mobile context, not on a physical phone or tablet.
-- Audio was not recorded or listened to. WebAudio starts only after a user
-  gesture, is mutable, and produced no console errors; no acoustic
+- Audio was not recorded or listened to by a human, and no subjective sound
+  quality judgement was made. `tools/audio-qa.js` verified only the signal
+  path: no AudioContext exists before the first user gesture, the context
+  reaches `running` at 48 kHz afterwards, the master output carries a
+  non-zero ambient signal (RMS 0.04666), a gunshot raises the peak, and
+  mute drives the output to exactly zero. No acoustic or perceptual
   verification was performed.
 - Touch devices have no dedicated on-screen pause button. Moving focus away
   from the browser pauses the mission and the resulting modal menu is fully
