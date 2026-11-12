@@ -1,0 +1,17 @@
+# Local QA dependencies. Reinstall inside tools/ with `npm install` if needed.
+tools/node_modules/
+
+# Internal project notes and session data are not part of the public source.
+.workbuddy-ai/
+
+# Editor, OS and local runtime artifacts.
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+.env
+.env.*
+*.local
+
+# Keep the empty GitHub Pages marker tracked.
+!.nojekyll

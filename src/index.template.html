@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!--INJECT_NOTICES-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1116">
+<link rel="icon" href="data:,">
+<meta name="description" content="HARBOR BLACKOUT - a single-player browser first-person mission at NORTHSTAR HARBOR.">
+<title>HARBOR BLACKOUT</title>
+<style>
+/*INJECT_CSS*/
+</style>
+</head>
+<body>
+<canvas id="viewport" aria-label="HARBOR BLACKOUT first-person game view"></canvas>
+<div id="letterbox" aria-hidden="true"><i class="lb top"></i><i class="lb bottom"></i></div>
+<div id="overlay">
+
+  <!-- Boot / loading -->
+  <section id="boot" class="screen active" data-aria-key="A11Y_BOOT">
+    <div class="boot-inner">
+      <div class="boot-mark">N<span></span>H</div>
+      <p class="kicker" data-key="BOOT_KICKER"></p>
+      <h1 class="boot-title" data-key="TITLE"></h1>
+      <div class="boot-bar"><i id="boot-fill"></i></div>
+      <p class="boot-stage" id="boot-stage" data-key="BOOT_STAGE_0"></p>
+      <p class="boot-note" data-key="BOOT_NOTE"></p>
+    </div>
+  </section>
+
+  <!-- Title -->
+  <section id="title" class="screen" data-aria-key="A11Y_TITLE">
+    <div class="scrim"></div>
+    <div class="title-card">
+      <p class="kicker" data-key="TITLE_KICKER"></p>
+      <h1 class="game-title"><span data-key="TITLE_A"></span><em data-key="TITLE_B"></em></h1>
+      <div class="rule"></div>
+      <p class="tagline" data-key="TITLE_TAGLINE"></p>
+      <p class="brief" data-key="TITLE_BRIEF"></p>
+      <div class="btn-row">
+        <button id="btn-begin" class="btn primary" type="button" data-key="BTN_BEGIN"></button>
+        <button id="btn-settings-title" class="btn" type="button" data-key="BTN_SETTINGS"></button>
+        <button id="btn-controls-title" class="btn" type="button" data-key="BTN_CONTROLS"></button>
+      </div>
+      <div class="title-legend">
+        <div class="legend-col" id="legend-keys"></div>
+        <div class="legend-col" id="legend-actions"></div>
+      </div>
+      <p class="title-foot"><span data-key="TITLE_FOOT_A"></span> <b data-key="TITLE_FOOT_B"></b> <span data-key="TITLE_FOOT_C"></span></p>
+    </div>
+  </section>
+
+  <!-- Intro cinematic -->
+  <section id="intro" class="screen" data-aria-key="A11Y_INTRO">
+    <div class="intro-card">
+      <p class="kicker" data-key="INTRO_KICKER"></p>
+      <h2 data-key="INTRO_LOCATION"></h2>
+      <p data-key="INTRO_TIME"></p>
+    </div>
+    <div class="intro-bottom">
+      <p class="radio-line" id="intro-radio"></p>
+      <button id="btn-skip" class="btn ghost" type="button" data-key="BTN_SKIP"></button>
+    </div>
+  </section>
+
+  <!-- In-game HUD -->
+  <section id="hud" class="screen" data-aria-key="A11Y_HUD">
+    <div id="damage-flash"></div>
+    <div id="compass" class="compass">
+      <div class="compass-track" id="compass-track"></div>
+      <div class="compass-needle"></div>
+      <div class="compass-head" id="compass-head">N</div>
+    </div>
+    <div id="objective" class="objective">
+      <p class="hud-label" id="obj-phase" data-key="OBJ_PHASE"></p>
+      <h3 id="obj-title"></h3>
+      <p id="obj-detail"></p>
+      <div id="relay-pips"><i></i><i></i><i></i></div>
+    </div>
+    <div id="wave-warning" class="wave-warning"><span data-key="WAVE_TITLE"></span><b id="wave-name"></b></div>
+    <div id="markers"></div>
+    <div id="crosshair" class="crosshair"><i class="ch t"></i><i class="ch b"></i><i class="ch l"></i><i class="ch r"></i><i class="ch dot"></i></div>
+    <div id="hitmarker" class="hitmarker"><i></i><i></i><i></i><i></i></div>
+    <div id="damage-arcs"></div>
+    <div id="killfeed"></div>
+    <div id="toast" class="toast"></div>
+    <div id="interaction" class="interaction">
+      <p id="interaction-label"></p>
+      <div class="interact-bar"><i id="interaction-fill"></i></div>
+      <p class="interact-hint" id="interaction-hint"></p>
+    </div>
+    <div id="radio" class="radio"><span id="radio-speaker"></span><p id="radio-text"></p></div>
+    <div class="hud-bottom-left">
+      <div class="health-row"><span class="hud-label" data-key="HUD_VITALS"></span><span id="health-num" class="mono">100</span></div>
+      <div class="health-bar"><i id="health-fill"></i></div>
+    </div>
+    <div class="hud-bottom-right">
+      <div class="ammo-row"><span id="ammo-mag" class="mono big">30</span><span class="ammo-sep">/</span><span id="ammo-reserve" class="mono">210</span></div>
+      <p class="hud-label" id="weapon-label"></p>
+      <p class="reload-hint" id="reload-hint"></p>
+    </div>
+    <div id="look-hint" class="look-hint"></div>
+  </section>
+
+  <!-- Touch controls -->
+  <section id="touch" class="screen" data-aria-key="A11Y_TOUCH">
+    <div id="touch-look" data-aria-key="A11Y_LOOK_ZONE"></div>
+    <div id="touch-stick"><i id="touch-stick-knob"></i></div>
+    <div class="touch-buttons">
+      <button class="tbtn" id="tb-fire" type="button" data-key="TOUCH_FIRE" data-aria-key="A11Y_FIRE"></button>
+      <button class="tbtn" id="tb-aim" type="button" data-key="TOUCH_ADS" data-aria-key="A11Y_ADS"></button>
+      <button class="tbtn small" id="tb-reload" type="button" data-key="TOUCH_RELOAD" data-aria-key="A11Y_RELOAD"></button>
+      <button class="tbtn small" id="tb-jump" type="button" data-key="TOUCH_JUMP" data-aria-key="A11Y_JUMP"></button>
+      <button class="tbtn small" id="tb-crouch" type="button" data-key="TOUCH_CROUCH" data-aria-key="A11Y_CROUCH"></button>
+      <button class="tbtn small" id="tb-interact" type="button" data-key="TOUCH_INTERACT" data-aria-key="A11Y_INTERACT"></button>
+      <button class="tbtn small" id="tb-sprint" type="button" data-key="TOUCH_SPRINT" data-aria-key="A11Y_SPRINT"></button>
+    </div>
+  </section>
+
+  <!-- Pause -->
+  <section id="pause" class="screen modal" data-aria-key="A11Y_PAUSE">
+    <div class="card">
+      <p class="kicker" data-key="PAUSE_KICKER"></p>
+      <h2 data-key="PAUSE_TITLE"></h2>
+      <p class="card-sub" id="pause-sub"></p>
+      <div class="btn-stack">
+        <button id="btn-resume" class="btn primary" type="button" data-key="BTN_RESUME"></button>
+        <button id="btn-settings-pause" class="btn" type="button" data-key="BTN_SETTINGS"></button>
+        <button id="btn-controls-pause" class="btn" type="button" data-key="BTN_CONTROLS"></button>
+        <button id="btn-restart-pause" class="btn" type="button" data-key="BTN_RESTART"></button>
+        <button id="btn-quit-pause" class="btn ghost" type="button" data-key="BTN_QUIT_TITLE"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Settings -->
+  <section id="settings" class="screen modal" data-aria-key="A11Y_SETTINGS">
+    <div class="card wide">
+      <p class="kicker" data-key="SETTINGS_KICKER"></p>
+      <h2 data-key="SETTINGS_TITLE"></h2>
+      <div class="settings-grid">
+        <label class="setting"><span data-key="SET_VOLUME"></span><input id="set-volume" type="range" min="0" max="100" value="70"><output id="out-volume">70</output></label>
+        <label class="setting"><span data-key="SET_MUTE"></span><input id="set-mute" type="checkbox"><output id="out-mute"></output></label>
+        <label class="setting"><span data-key="SET_SENSITIVITY"></span><input id="set-sens" type="range" min="20" max="250" value="100"><output id="out-sens">100</output></label>
+        <label class="setting"><span data-key="SET_INVERT_Y"></span><input id="set-invert" type="checkbox"><output id="out-invert"></output></label>
+        <label class="setting"><span data-key="SET_FOV"></span><input id="set-fov" type="range" min="65" max="105" value="82"><output id="out-fov">82</output></label>
+        <label class="setting"><span data-key="SET_QUALITY"></span><select id="set-quality"><option value="low" data-key="QUALITY_LOW"></option><option value="medium" data-key="QUALITY_MEDIUM"></option><option value="high" data-key="QUALITY_HIGH"></option></select><output></output></label>
+        <label class="setting"><span data-key="SET_SHAKE"></span><input id="set-shake" type="checkbox"><output id="out-shake"></output></label>
+        <label class="setting"><span data-key="SET_SUBTITLES"></span><input id="set-subs" type="checkbox"><output id="out-subs"></output></label>
+      </div>
+      <p class="card-sub" data-key="SETTINGS_NOTE"></p>
+      <div class="btn-row">
+        <button id="btn-settings-back" class="btn primary" type="button" data-key="BTN_BACK"></button>
+        <button id="btn-settings-reset" class="btn ghost" type="button" data-key="BTN_RESET_DEFAULTS"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Controls / touch guide -->
+  <section id="controls" class="screen modal" data-aria-key="A11Y_CONTROLS_PANEL">
+    <div class="card wide">
+      <p class="kicker" data-key="CONTROLS_KICKER"></p>
+      <h2 data-key="CONTROLS_TITLE"></h2>
+      <div class="controls-grid" id="controls-grid"></div>
+      <p class="card-sub" data-key="CONTROLS_NOTE"></p>
+      <button id="btn-controls-back" class="btn primary" type="button" data-key="BTN_BACK"></button>
+    </div>
+  </section>
+
+  <!-- Death -->
+  <section id="death" class="screen modal" data-aria-key="A11Y_DEATH">
+    <div class="card danger">
+      <p class="kicker" data-key="DEATH_KICKER"></p>
+      <h2 data-key="DEATH_TITLE"></h2>
+      <p class="card-sub" id="death-cause"></p>
+      <div class="btn-stack">
+        <button id="btn-retry" class="btn primary" type="button" data-key="BTN_RETRY"></button>
+        <button id="btn-quit-death" class="btn ghost" type="button" data-key="BTN_QUIT_TITLE"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Victory flash -->
+  <section id="victory" class="screen" data-aria-key="A11Y_VICTORY">
+    <div class="victory-wrap">
+      <p class="kicker" data-key="VICTORY_KICKER"></p>
+      <h2 data-key="VICTORY_TITLE"></h2>
+      <p data-key="VICTORY_SUB"></p>
+    </div>
+  </section>
+
+  <!-- Debrief -->
+  <section id="debrief" class="screen modal" data-aria-key="A11Y_DEBRIEF">
+    <div class="card wide">
+      <p class="kicker" data-key="DEBRIEF_KICKER"></p>
+      <h2 data-key="DEBRIEF_TITLE"></h2>
+      <p class="card-sub" data-key="DEBRIEF_SUB"></p>
+      <table class="stats">
+        <tbody>
+          <tr><th data-key="STAT_TIME"></th><td id="stat-time" class="mono">00:00</td></tr>
+          <tr><th data-key="STAT_ACCURACY"></th><td id="stat-accuracy" class="mono">0%</td></tr>
+          <tr><th data-key="STAT_KILLS"></th><td id="stat-kills" class="mono">0</td></tr>
+          <tr><th data-key="STAT_SHOTS"></th><td id="stat-shots" class="mono">0</td></tr>
+          <tr><th data-key="STAT_RETRIES"></th><td id="stat-retries" class="mono">0</td></tr>
+          <tr><th data-key="STAT_RELAYS"></th><td id="stat-relays" class="mono">0 / 3</td></tr>
+          <tr><th data-key="STAT_RATING"></th><td id="stat-rating">-</td></tr>
+        </tbody>
+      </table>
+      <div class="btn-row">
+        <button id="btn-debrief-retry" class="btn primary" type="button" data-key="BTN_REPLAY"></button>
+        <button id="btn-debrief-title" class="btn ghost" type="button" data-key="BTN_QUIT_TITLE"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fatal error -->
+  <section id="error" class="screen modal" data-aria-key="A11Y_ERROR">
+    <div class="card danger">
+      <p class="kicker" data-key="ERROR_KICKER"></p>
+      <h2 data-key="ERROR_TITLE"></h2>
+      <p class="card-sub" id="error-detail"></p>
+      <p class="card-sub" data-key="ERROR_NOTE"></p>
+    </div>
+  </section>
+
+  <div id="fps-debug" aria-hidden="true"></div>
+</div>
+<script>
+/*INJECT_VENDOR*/
+</script>
+<script>
+/*INJECT_MODULES*/
+</script>
+</body>
+</html>
